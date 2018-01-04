@@ -14,15 +14,12 @@ HeyDo蓝牙模块
   
   
   dependencies {
-  
 	        compile 'com.github.18202810862:HeyDoBle:1.2'
-		
 	}
   
 2.在androidManifest中添加:
 
-
-  <service android:name="com.iloof.heydoblelibrary.BleHelper" />
+ <service android:name="com.iloof.heydoblelibrary.BleHelper" />
   
   
   
