@@ -22,8 +22,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.clj.fastble.BleManager;
-import com.clj.fastble.data.ScanResult;
-import com.clj.fastble.scan.ListScanCallback;
+import com.clj.fastble.callback.BleScanCallback;
+import com.clj.fastble.data.BleDevice;
+import com.clj.fastble.scan.BleScanRuleConfig;
 import com.iloof.heydoblelibrary.app.Const;
 import com.iloof.heydoblelibrary.app.HdApplication;
 import com.iloof.heydoblelibrary.heydoc1.BleCmdSetC1;
