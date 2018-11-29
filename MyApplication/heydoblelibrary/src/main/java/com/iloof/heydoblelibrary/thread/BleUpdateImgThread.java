@@ -3,10 +3,10 @@ package com.iloof.heydoblelibrary.thread;
 import android.content.Intent;
 import android.util.Log;
 
-import com.iloof.heydoblelibrary.BleConstant;
-import com.iloof.heydoblelibrary.BleHelper;
 import com.iloof.heydoblelibrary.app.Const;
 import com.iloof.heydoblelibrary.app.HdApplication;
+import com.iloof.heydoblelibrary.BleConstant;
+import com.iloof.heydoblelibrary.BleHelper;
 import com.iloof.heydoblelibrary.heydos1.BleCmdSetS1;
 import com.iloof.heydoblelibrary.util.BleImg4Send;
 

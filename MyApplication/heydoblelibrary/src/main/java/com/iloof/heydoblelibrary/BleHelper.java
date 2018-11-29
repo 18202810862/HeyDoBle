@@ -426,12 +426,22 @@ public class BleHelper extends Service {
      */
     public void startScanBLE(final String bleMac) {
 
-        final BleManager bleManager = new BleManager(this);
-        bleManager.scanDevice(new ListScanCallback(10000) {
-            @Override
-            public void onScanning(ScanResult result) {
+        BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
+                .setScanTimeOut(20000)              // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
+                .build();
+        BleManager.getInstance().initScanRule(scanRuleConfig);
 
+        BleManager.getInstance().scan(new BleScanCallback() {
+            @Override
+            public void onScanStarted(boolean success) {
+                Log.i(TAG, "onScanStarted ---->" + System.currentTimeMillis());
+
+            }
+
+            @Override
+            public void onScanning(BleDevice result) {
                 Log.i(TAG, "result ---->" + result.getDevice().getAddress() + "===" + result.getDevice().getName());
+
 
                 if (result.getDevice().getAddress().equals(bleMac) && !TextUtils.isEmpty(result.getDevice().getName())) {
                     byte[] scanRecord = result.getScanRecord();
@@ -447,16 +457,17 @@ public class BleHelper extends Service {
                         BleConstant.setIndexArray(0);
                     }
 
-                    bleManager.cancelScan();
+                    BleManager.getInstance().cancelScan();
                     connect(bleMac);
                 }
             }
 
             @Override
-            public void onScanComplete(ScanResult[] results) {
+            public void onScanFinished(List<BleDevice> scanResultList) {
+                Log.i(TAG, "onScanFinished ---->" + System.currentTimeMillis());
                 int j = 0;
-                for (int i = 0; i < results.length; i++) {
-                    if (results[i].getDevice().getAddress().equals(bleMac)) {
+                for (int i = 0; i < scanResultList.size(); i++) {
+                    if (scanResultList.get(i).getDevice().getAddress().equals(bleMac)) {
                         j++;
                     }
                 }
@@ -466,6 +477,7 @@ public class BleHelper extends Service {
                 }
             }
         });
+
     }
 
     /**
@@ -513,12 +525,12 @@ public class BleHelper extends Service {
         return CONNECT_CONNECTING;
     }
 
-    private void sendBleConnectOutTime(){
+    private void sendBleConnectOutTime() {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!Const.blueRealtimestate){
-                    Log.i(TAG,"sendBleConnectOutTime -------------------->");
+                if (!Const.blueRealtimestate) {
+                    Log.i(TAG, "sendBleConnectOutTime -------------------->");
                     mHandler.sendEmptyMessage(BleConstant.HM_BLE_DISCONNECTED);
                 }
             }
@@ -531,11 +543,11 @@ public class BleHelper extends Service {
      */
     public void close() {
 
-        Log.i(TAG,"close -------------------->");
+        Log.i(TAG, "close -------------------->");
 
-        if (mBluetoothGatt != null){
+        if (mBluetoothGatt != null) {
             mBluetoothGatt.close();
-            mBluetoothGatt =null;
+            mBluetoothGatt = null;
         }
         // We're cancelling the running thread for sending image
         if (mUpdateImageThread != null) {
@@ -1099,7 +1111,7 @@ public class BleHelper extends Service {
      * @param temperatrue 温度
      */
     public void requestSetHigthtemperatrue(int temperatrue) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfSetHightemperatrue(temperatrue * 100));
 
@@ -1112,10 +1124,10 @@ public class BleHelper extends Service {
     /**
      * 获取指定编号定时器(S1、C1、S1-S，C1和S1-S一样)
      *
-     * @param num   S1水杯共5组定时器，获取时需要传对应的数字，C1和S1-S num就随便传
+     * @param num S1水杯共5组定时器，获取时需要传对应的数字，C1和S1-S num就随便传
      */
     public void requestGetTimer(int num) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfTimer(num));
 
@@ -1130,10 +1142,9 @@ public class BleHelper extends Service {
 
     /**
      * 升级固件(S1、C1、S1-S，C1和S1-S一样)
-     *
      */
     public void requestUpdateHeydo() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfUpdateHeydo());
             } else {
@@ -1149,16 +1160,15 @@ public class BleHelper extends Service {
      */
     public void requestWaterRemind() {
         // TODO 自动生成的方法存根
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfWaterRemind());
 
-            } else if (styleFlag == Const.S1S_STYLE_FLAG){
+            } else if (styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1S.getCmdOfWaterRemind());
 
             }
         }
-
 
 
     }
@@ -1167,26 +1177,23 @@ public class BleHelper extends Service {
      * 发送干杯指令到水杯(S1、S1-S)
      */
     public void requestCheers() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfCheers());
 
-            } else if (styleFlag == Const.S1S_STYLE_FLAG){
+            } else if (styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1S.getCmdOfCheers());
             }
         }
-
-
 
 
     }
 
     /**
      * 获取水杯软件版本(S1、C1、S1-S ,C1和S1-S一样的)
-     *
      */
     public void requestCupSoftVersion() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfCupSoftVersion());
             } else {
@@ -1195,15 +1202,14 @@ public class BleHelper extends Service {
         }
 
 
-
     }
 
     /**
      * 获取序列号(S1)
      */
     public void requestSeriousNum() {
-        if (Const.blueRealtimestate){
-            if (styleFlag == Const.S1_STYLE_FLAG){
+        if (Const.blueRealtimestate) {
+            if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfSeriousNum());
             }
         }
@@ -1213,10 +1219,9 @@ public class BleHelper extends Service {
 
     /**
      * 矫正杯子重量(S1、C1、S1-S，C1和S1-S一样)
-     *
      */
     public void requestAdjustWeight() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfAdjustWeight());
             } else {
@@ -1225,14 +1230,13 @@ public class BleHelper extends Service {
         }
 
 
-
     }
 
     /**
      * 关闭工厂模式(S1)
      */
     public void requestExtinguishFactory() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfExtinguishFactory());
 
@@ -1248,7 +1252,7 @@ public class BleHelper extends Service {
      * @param time 时间戳
      */
     public void requesttiming(int time) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1S_STYLE_FLAG || styleFlag == Const.C1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetC1.getCmdOfTiming(time));
             }
@@ -1262,7 +1266,7 @@ public class BleHelper extends Service {
      * 0为开启,2为关闭
      */
     public void requestLightScreen(int state) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfLightScreen(state));
 
@@ -1277,7 +1281,7 @@ public class BleHelper extends Service {
      * 1为设置摄氏度,2为设置华氏度
      */
     public void requestTemperatureStyle(int state) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfTemparatureStyle(state));
             }
@@ -1290,12 +1294,11 @@ public class BleHelper extends Service {
      * 清空记录(S1,测试用不公开)
      */
     public void requestDeleteRecords() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfDeleteRecords());
             }
         }
-
 
 
     }
@@ -1305,13 +1308,12 @@ public class BleHelper extends Service {
      * count 次数
      */
     public void requestBuzzerSound(int count) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG || styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfBuzzerSound(count));
 
             }
         }
-
 
 
     }
@@ -1325,7 +1327,7 @@ public class BleHelper extends Service {
      * @param b     对应RGB三原色B
      */
     public void requestBreathingLightFlashing(int count, int r, int g, int b) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
 
             if (styleFlag == Const.C1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetC1.getCmdOfBreathingLightFlashing(count, r, g, b));
@@ -1342,7 +1344,7 @@ public class BleHelper extends Service {
      * @param color1 对应RGB三原色R
      */
     public void requestBreathingLightsFlashing(int length, int count, List<Integer> color1) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
 
             if (styleFlag == Const.C1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetC1.getCmdOfBreathingLightsFlashing(length, count, color1));
@@ -1361,7 +1363,7 @@ public class BleHelper extends Service {
      * @param secondTimeEnd   时间段2结束时间
      */
     public void requestCustomNoDisTurb(int state, int firstTimeStart, int firstTimeEnd, int secondTimeStart, int secondTimeEnd) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
 
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfCustomNoDisturb(state, firstTimeStart, firstTimeEnd, secondTimeStart, secondTimeEnd));
@@ -1380,7 +1382,7 @@ public class BleHelper extends Service {
      * @param three 顺序3
      */
     public void requestCustomUiShow(int main, int one, int two, int three) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfCustomUiShow(main, one, two, three));
 
@@ -1397,11 +1399,11 @@ public class BleHelper extends Service {
      * @param temprature 温度值
      */
     public void requestTempratureLow(int offOn, int temprature) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfTempratureLow(offOn, temprature));
 
-            } else if (styleFlag == Const.S1S_STYLE_FLAG){
+            } else if (styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1S.getCmdOfTempratureLow(offOn, temprature));
             }
         }
@@ -1413,13 +1415,12 @@ public class BleHelper extends Service {
      * 获取温度提醒（S1-S）
      */
     public void requestGetRemindTemp() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1S.getCmdOfRemindTemp());
 
             }
         }
-
 
 
     }
@@ -1431,7 +1432,7 @@ public class BleHelper extends Service {
      * @param state 1为设置 毫升ml,2为设置  盎司oz
      */
     public void requestWeightStyle(int state) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfWeightStyle(state));
             }
@@ -1449,11 +1450,11 @@ public class BleHelper extends Service {
      * @param volume  系统音量(16级) 音量建议设置为 8级别
      */
     public void requestSetNoDisturbing(int disturb, int remind, int light, int volume) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.C1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetC1.getCmdOfSetNoDisturbing(disturb, remind, light, volume));
 
-            } else if (styleFlag == Const.S1S_STYLE_FLAG){
+            } else if (styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1S.getCmdOfSetNoDisturbing(disturb, remind, light, volume));
             }
         }
@@ -1464,10 +1465,10 @@ public class BleHelper extends Service {
     /**
      * 音量测试(C1)
      *
-     * @param volume  测试音量大小
+     * @param volume 测试音量大小
      */
     public void requestSetSoundAjust(int volume) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.C1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetC1.getCmdOfSetSoundAjust(volume));
             }
@@ -1483,7 +1484,7 @@ public class BleHelper extends Service {
      * @param light  亮度等级
      */
     public void requestSetLightAjust(int red, int green, int blue, int second, int light) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.C1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetC1.getCmdOfSetLightAjust(red, green, blue, second, light));
             }
@@ -1499,7 +1500,7 @@ public class BleHelper extends Service {
      * @param quantity 记录的数量
      */
     public void requestTouchsRecord(int number, int quantity) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
 
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfGetTouchsRecord(number, quantity));
@@ -1510,10 +1511,9 @@ public class BleHelper extends Service {
 
     /**
      * 获取最新饮水数据(S1、C1、S1-S，C1和S1-S一样)
-     *
      */
     public void requestLatestDrinkRecord() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfDrinkRecord());
             } else {
@@ -1530,14 +1530,13 @@ public class BleHelper extends Service {
      * @param quantity 获取条数  S1最多请求10条，C1、S1-S最多请求6条
      */
     public void requestDrinksRecord(int startNum, int quantity) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfGetDrinksRecord(startNum, quantity));
             } else {
                 sendCmdToBle(BleCmdSetC1.getCmdOfGetDrinksRecord(startNum, quantity));
             }
         }
-
 
 
     }
@@ -1552,10 +1551,10 @@ public class BleHelper extends Service {
      * @param waterUnit 1:水量单位(盎司)    0:温度显示单位(ml)
      */
     public void requestHeighSafeControl(int openHigh, int tempUnit, int waterUnit) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOftHeighSafeControl(openHigh));
-            } else if (styleFlag == Const.S1S_STYLE_FLAG){
+            } else if (styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1S.getCmdOftHeighSafeControl(openHigh, tempUnit, waterUnit));
 
             }
@@ -1577,7 +1576,7 @@ public class BleHelper extends Service {
      */
     public void requestsetAlarm(int group, int setType, int frequency,
                                 int switcher, int remindType, int seconds, int waterValue) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfSetAlarm(group, setType, frequency, switcher,
                         remindType, seconds, waterValue));
@@ -1585,31 +1584,31 @@ public class BleHelper extends Service {
         }
 
 
-
     }
 
-//    /**
-//     * 设置儿童水杯定时器组(c1)
-//     * @param context
-//     * @param style
-//     */
-//    public void requestsetChildAlarm(Context context, int style) {
-//        if (style == 1) {
-//            sendCmdToBle(BleCmdSetC1.getCmdOfChildSetAlarm(context));
-//
-//        } else {
-////            sendCmdToBle(BleCmdSetS1S.getCmdOfS1SSetAlarm(context));
-//
-//        }
-//    }
+    /**
+     * 设置水杯定时器组(S1-S,C1)
+     *
+     * @param context
+     * @param style
+     */
+    public void requestsetChildAlarm(Context context, List<AssisstTimerBean> datas, int style) {
+        if (style == 1) {
+            sendCmdToBle(BleCmdSetC1.getCmdOfChildSetAlarm(context, datas));
+
+        } else {
+            sendCmdToBle(BleCmdSetS1S.getCmdOfS1SSetAlarm(context, datas));
+
+        }
+    }
 
     /**
      * 设置每日饮水目标(S1、C1、S1-S，C1和S1-S一样)
      *
-     * @param data  饮水目标
+     * @param data 饮水目标
      */
     public void requestDayDrinkGoal(int data) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 if (data * 10 > 32767) {
                     sendCmdToBle(BleCmdSetS1.getCmdOfDayDrinkGoal(-(data * 10 - 32767)));
@@ -1627,10 +1626,9 @@ public class BleHelper extends Service {
 
     /**
      * 获取每日饮水目标(S1、C1、S1-S，C1和S1-S一样)
-     *
      */
     public void requestGetDrinkGoal() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfGetDrinkGoal());
 
@@ -1644,10 +1642,9 @@ public class BleHelper extends Service {
 
     /**
      * 请求水杯状态信息(S1、C1、S1-S，C1和S1-S一样)
-     *
      */
     public void requestCurrentStatusOne() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfCurrentStatusOne());
 
@@ -1678,16 +1675,15 @@ public class BleHelper extends Service {
      * @param index The index of picture
      */
     public void requestDisplay1P(int index) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfDisplay1P(index));
 
-            } else if (styleFlag == Const.S1S_STYLE_FLAG){
+            } else if (styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1S.getCmdOfDisplay1P(index));
 
             }
         }
-
 
 
     }
@@ -1698,7 +1694,7 @@ public class BleHelper extends Service {
      * @see BleMorePicture
      */
     public void requestDisplayMP(BleMorePicture mpInfo) {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfDisplayMP(mpInfo));
 
@@ -1707,7 +1703,6 @@ public class BleHelper extends Service {
 
             }
         }
-
 
 
     }
@@ -1740,10 +1735,9 @@ public class BleHelper extends Service {
 
     /**
      * 重启水杯(S1、C1、S1-S，C1和S1-S一样)
-     *
      */
     public void requestResetCup() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1.getCmdOfResetCup());
             } else {
@@ -1757,12 +1751,11 @@ public class BleHelper extends Service {
      * 恢复出厂(C1)
      */
     public void requestFactoryReset() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.C1_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetC1.getCmdOfFactoryReset());
             }
         }
-
 
 
     }
@@ -1771,7 +1764,7 @@ public class BleHelper extends Service {
      * 显示JPG头像(S1-S)
      */
     public void requestShowJpgHead() {
-        if (Const.blueRealtimestate){
+        if (Const.blueRealtimestate) {
             if (styleFlag == Const.S1S_STYLE_FLAG) {
                 sendCmdToBle(BleCmdSetS1S.getCmdOfShowJpgHead());
             }

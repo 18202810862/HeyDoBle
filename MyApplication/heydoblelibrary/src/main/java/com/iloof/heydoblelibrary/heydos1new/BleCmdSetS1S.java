@@ -1,9 +1,13 @@
 package com.iloof.heydoblelibrary.heydos1new;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.iloof.heydoblelibrary.AssisstTimerBean;
 import com.iloof.heydoblelibrary.BleConstant;
 import com.iloof.heydoblelibrary.util.BleMorePicture;
+
+import java.util.List;
 
 import static com.iloof.heydoblelibrary.util.BlePackageCmd.packagingCommand;
 import static com.iloof.heydoblelibrary.util.BleTransfer.Deci2Hex;
@@ -93,97 +97,85 @@ public final class BleCmdSetS1S {
     }
 
 
-//    /**
-//     * @return 设置闹钟的命令
-//     */
-//    public static byte[] getCmdOfS1SSetAlarm(Context context) {
-//
-//        List<HashMap<String, String>> datas =
-//                DbHelper.getInstance(context).query(AssisstChildManager.TABLE_NAME, null, null, null, null);
-//
-//        Log.i("ActivityAssistSetTime", "datas = " + datas.toString());
-//        Log.i("ActivityAssistSetTime", "datas.size = " + datas.size());
-//        byte[] temp, cmd;
-//        cmd = new byte[64];
-//        //设置标志
-//        temp = Deci2Hex(1, 1);
-//        cmd[0] = temp[0];
-//
-//        //有效设置组
-//        temp = Deci2Hex(datas.size(), 1);
-//
-//        cmd[1] = temp[0];
-//
-//        //保留
-//        temp = Deci2Hex(1, 2);
-//        cmd[2] = temp[0];
-//        cmd[3] = temp[1];
-//
-//        if (datas.size() > 0) {
-//            for (int i = 1; i <= 15; i++) {
-//                if (i <= datas.size()) {
-//
-////                    temp = BleUtil.Deci2Hex((int) ((offOn * Math.pow(2, 6))+(speed * Math.pow(2, 5)) + tem), 2);
-////                    cmd[0] = temp[1];
-//                    /** 设置属性*/
-//                    //开关
-//                    int openState = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_STATUS));
-//                    //工作模式 0:一A；1:一B；2:每天重复；3:自定义
-//                    int mode = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_TYPE));
-//                    int status = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_NOTIFY_STATUS));
-//                    Log.i("ActivityAssistSetTime", " BleCmdSet  mode " + mode);
-//                    if (mode == 0) {
-//                        temp = Deci2Hex((int) ((openState * Math.pow(2, 7)) + (0 * Math.pow(2, 5)) + 0 * Math.pow(2, 4) + status), 2);
-//                    } else if (mode == 1) {
-//                        temp = Deci2Hex((int) ((openState * Math.pow(2, 7)) + (1 * Math.pow(2, 5)) + 0 * Math.pow(2, 4) + status), 2);
-//                    } else if (mode == 2) {
-//                        temp = Deci2Hex((int) ((openState * Math.pow(2, 7)) + (1 * Math.pow(2, 6)) + (0 * Math.pow(2, 5)) + 0 * Math.pow(2, 4) + status), 2);
-//                    } else {
-//                        temp = Deci2Hex((int) ((openState * Math.pow(2, 7)) + (1 * Math.pow(2, 6)) + (1 * Math.pow(2, 5)) + 0 * Math.pow(2, 4) + status), 2);
-//                    }
-//                    cmd[i * 4] = temp[1];
-//
-//                    /** 星期选择*/
-//                    int sunday = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_SUNDAY));
-//                    int monday = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_MONDAY));
-//                    int tuesday = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_TUESDAY));
-//                    int wednesday = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_WEDNESDAY));
-//                    int thursday = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_THURSDAY));
-//                    int friday = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_FRIDAY));
-//                    int saturday = Integer.parseInt(datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_SATURDAY));
-//                    temp = Deci2Hex((int) ((0 * Math.pow(2, 7)) + saturday * Math.pow(2, 6) + friday * Math.pow(2, 5)
-//                            + thursday * Math.pow(2, 4) + wednesday * Math.pow(2, 3) + tuesday * Math.pow(2, 2) + monday * Math.pow(2, 1)
-//                            + sunday * Math.pow(2, 0)), 2);
-//
-//                    cmd[i * 4 + 1] = temp[1];
-//
-//                    String time = datas.get(i - 1).get(AssisstChildManager.AssisstChildColumns.CHILD_REMIND_TIME);
-//                    time = HdUtils.formatHM(context,
-//                            new Date(Long.parseLong(time) * 1000
-//                                    - TimeZone.getDefault().getRawOffset()));
-//                    /** 小时*/
-//                    int hour = Integer.parseInt(time.split(":")[0]);
-//                    temp = Deci2Hex(hour, 1);
-//                    cmd[i * 4 + 2] = temp[0];
-//
-//                    /** 分钟*/
-//                    int minutes = Integer.parseInt(time.split(":")[1]);
-//                    temp = Deci2Hex(minutes, 1);
-//                    cmd[i * 4 + 3] = temp[0];
-//
-//                } else {
-//                    temp = Deci2Hex(0, 4);
-//                    cmd[i * 4] = temp[0];
-//                    cmd[i * 4 + 1] = temp[1];
-//                    cmd[i * 4 + 2] = temp[2];
-//                    cmd[i * 4 + 3] = temp[3];
-//                }
-//
-//            }
-//        }
-//
-//        return packagingCommand(null, BleConstant.ID_SET_ALARM, cmd, 64);
-//    }
+    /**
+     * @return 设置闹钟的命令
+     */
+    public static byte[] getCmdOfS1SSetAlarm(Context context, List<AssisstTimerBean> datas) {
+
+
+        Log.i("ActivityAssistSetTime", "datas = " + datas.toString());
+        Log.i("ActivityAssistSetTime", "datas.size = " + datas.size());
+        byte[] temp, cmd;
+        cmd = new byte[64];
+        //设置标志
+        temp = Deci2Hex(1, 1);
+        cmd[0] = temp[0];
+
+        //有效设置组
+        temp = Deci2Hex(datas.size(), 1);
+
+        cmd[1] = temp[0];
+
+        //保留
+        temp = Deci2Hex(1, 2);
+        cmd[2] = temp[0];
+        cmd[3] = temp[1];
+
+        if (datas.size() > 0) {
+            for (int i = 1; i <= 15; i++) {
+                if (i <= datas.size()) {
+
+//                    temp = BleUtil.Deci2Hex((int) ((offOn * Math.pow(2, 6))+(speed * Math.pow(2, 5)) + tem), 2);
+//                    cmd[0] = temp[1];
+                    /** 设置属性*/
+                    //开关
+                    int openState = datas.get(i - 1).getOpenState();
+                    //工作模式 0:一A；1:一B；2:每天重复；3:自定义
+                    int mode = datas.get(i - 1).getMode();
+                    int notifyWays = datas.get(i-1).getNotifyWays();
+
+
+                    temp = Deci2Hex((int) ((openState * Math.pow(2, 7)) + (mode * Math.pow(2, 5)) + notifyWays), 2);
+
+                    cmd[i * 4] = temp[1];
+
+                    /** 星期选择*/
+                    int sunday = datas.get(i - 1).getSunday();
+                    int monday = datas.get(i - 1).getMonday();
+                    int tuesday =datas.get(i - 1).getTuesday();
+                    int wednesday = datas.get(i - 1).getWednesday();
+                    int thursday = datas.get(i - 1).getThursday();
+                    int friday = datas.get(i - 1).getFriday();
+                    int saturday = datas.get(i - 1).getSaturday();
+                    temp = Deci2Hex((int) ((0 * Math.pow(2, 7)) + saturday * Math.pow(2, 6) + friday * Math.pow(2, 5)
+                            + thursday * Math.pow(2, 4) + wednesday * Math.pow(2, 3) + tuesday * Math.pow(2, 2) + monday * Math.pow(2, 1)
+                            + sunday * Math.pow(2, 0)), 2);
+
+                    cmd[i * 4 + 1] = temp[1];
+
+                    /** 小时*/
+                    int hour = datas.get(i - 1).getHour();
+                    temp = Deci2Hex(hour, 1);
+                    cmd[i * 4 + 2] = temp[0];
+
+                    /** 分钟*/
+                    int minutes = datas.get(i - 1).getMinutes();
+                    temp = Deci2Hex(minutes, 1);
+                    cmd[i * 4 + 3] = temp[0];
+
+                } else {
+                    temp = Deci2Hex(0, 4);
+                    cmd[i * 4] = temp[0];
+                    cmd[i * 4 + 1] = temp[1];
+                    cmd[i * 4 + 2] = temp[2];
+                    cmd[i * 4 + 3] = temp[3];
+                }
+
+            }
+        }
+
+        return packagingCommand(null, BleConstant.ID_SET_ALARM, cmd, 64);
+    }
 
 
 
