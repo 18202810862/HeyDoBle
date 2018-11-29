@@ -22,6 +22,11 @@ HeyDo蓝牙模块
 2.在androidManifest中添加:
 
  	<service android:name="com.iloof.heydoblelibrary.BleHelper" />
+	
+	
+3.在application或要使用蓝牙连接的activity调用一次（只需要调用一次）
+
+BleManager.getInstance().init(getApplication());
 
   
   
