@@ -29,6 +29,12 @@ HeyDo蓝牙模块
 BleManager.getInstance().init(getApplication());
 
  
+ 
+ 
+ 
+ 
+ 
+ 
  2018/12/5:
  增加对添加饮水记录命令的支持
   
