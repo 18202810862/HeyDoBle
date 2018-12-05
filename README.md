@@ -16,13 +16,18 @@ HeyDo蓝牙模块
   
   
   	dependencies {
-	        compile 'com.github.18202810862:HeyDoBle:1.3'
+	        compile 'com.github.18202810862:HeyDoBle:1.4'
 	}
   
 2.在androidManifest中添加:
 
  	<service android:name="com.iloof.heydoblelibrary.BleHelper" />
-  
+	
+	
+3.在application或要使用蓝牙连接的activity调用一次（只需要调用一次）
+
+BleManager.getInstance().init(getApplication());
+
   
   
   
