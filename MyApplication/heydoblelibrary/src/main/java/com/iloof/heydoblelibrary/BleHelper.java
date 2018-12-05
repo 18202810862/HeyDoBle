@@ -1773,4 +1773,16 @@ public class BleHelper extends Service {
 
     }
 
+    /**
+     * 添加饮水记录(S1-S)
+     */
+    public void requestAddWaterRemind(int add) {
+        if (Const.blueRealtimestate) {
+            if (styleFlag == Const.S1S_STYLE_FLAG) {
+                sendCmdToBle(BleCmdSetS1S.getCmdOfAddWaterRemind(add));
+            }
+        }
+
+    }
+
 }

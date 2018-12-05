@@ -264,10 +264,19 @@ public abstract class BleHandlerAbstruct extends Handler {
             case BleConstant.ID_GET_REMIND_TEMP:
                 answerGetRemindTemp((BleMessage) msg.obj);
                 break;
+            case BleConstant.ID_ADD_WATER_REMIND:
+                answerAddWaterRemind((BleMessage) msg.obj);
+                break;
             default:
                 break;
         }
     }
+
+    /**
+     * 添加饮水记录
+     * @param obj
+     */
+    protected abstract void answerAddWaterRemind(BleMessage obj);
 
     /**
      * 获取温度提醒(S1-S)

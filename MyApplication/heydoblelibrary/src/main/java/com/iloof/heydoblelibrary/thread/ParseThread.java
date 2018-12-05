@@ -482,6 +482,12 @@ public class ParseThread extends Thread {
                 broadcastUpdate(BleConstant.ID_GET_REMIND_TEMP, message);
 
                 break;
+            case BleConstant.ID_ADD_WATER_REMIND:
+                Log.i(TAG, "ID_ADD_WATER_REMIND--------->");
+                message = new BleMessage(message);
+                broadcastUpdate(BleConstant.ID_ADD_WATER_REMIND, message);
+
+                break;
             default:
                 Log.i(TAG, "Out of Range!");
                 break;

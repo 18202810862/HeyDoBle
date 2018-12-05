@@ -299,4 +299,29 @@ public final class BleCmdSetS1S {
         return packagingCommand(null, BleConstant.ID_WATERREMIND, Deci2Hex(0, 1), 1);
     }
 
+    /**
+     * 添加饮水记录指令
+     */
+    public static byte[] getCmdOfAddWaterRemind(int add) {
+
+        byte[] command = null;
+        byte[] cmd = new byte[3];
+        byte[] temp = null;
+        if (add < 0) {
+            return command;
+        }
+
+        temp = Deci2Hex(1, 1);
+        cmd[0] = temp[0];
+        temp = Deci2Hex(add, 2);
+        cmd[1] = temp[0];
+        cmd[2] = temp[1];
+
+
+        command = packagingCommand(null, BleConstant.ID_ADD_WATER_REMIND,
+                cmd, 3);
+
+        return command;
+    }
+
 }

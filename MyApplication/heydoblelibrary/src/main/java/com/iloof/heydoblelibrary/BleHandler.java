@@ -215,6 +215,11 @@ public class BleHandler extends BleHandlerAbstruct {
 	}
 
 	@Override
+	protected void answerAddWaterRemind(BleMessage obj) {
+
+	}
+
+	@Override
 	protected void answerGetRemindTemp(BleMessage obj) {
 
 	}

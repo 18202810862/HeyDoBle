@@ -586,6 +586,9 @@ public final class BleConstant {
 
 	/** 显示JPG头像*/
 	public final static int ID_SHOW_JPEG_HEAD= 76;
+
+	/** 添加饮水记录*/
+	public final static int ID_ADD_WATER_REMIND= 77;
 	
 	/** 系统蓝牙未打开 */
 	public final static int ID_SYS_BLUETOOTH_NOT_ENABLE = 200;
@@ -873,7 +876,8 @@ public final class BleConstant {
 					{ 0x50, 0x02 },         //亮度											73
 					{ (byte)0xA0, 0x06 },	//获取存储器上的已存储的固件信息			    74
 					{ 0x11, 0x02 },			//语音模式			                            75
-					{ 0x63, 0x00 },			//语音模式			                            76
+					{ 0x63, 0x00 },			//指定页编号JPG文件转换位图存储		            76
+					{ 0x20, 0x0C },			//添加饮水			                            77
 			};
 
 		}
