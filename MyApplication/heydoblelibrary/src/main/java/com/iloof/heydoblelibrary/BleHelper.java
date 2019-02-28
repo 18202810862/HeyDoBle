@@ -18,7 +18,6 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.clj.fastble.BleManager;
@@ -444,7 +443,7 @@ public class BleHelper extends Service {
                 Log.i(TAG, "result ---->" + result.getDevice().getAddress() + "===" + result.getDevice().getName());
 
 
-                if (result.getDevice().getAddress().equals(bleMac) && !TextUtils.isEmpty(result.getDevice().getName())) {
+                if (result.getDevice().getAddress().equals(bleMac)) {
                     byte[] scanRecord = result.getScanRecord();
                     if (new String(scanRecord).contains("HC1-T")) {
                         styleFlag = 1;
@@ -1409,7 +1408,6 @@ public class BleHelper extends Service {
             }
         }
 
-
     }
 
     /**
@@ -1459,8 +1457,6 @@ public class BleHelper extends Service {
                 sendCmdToBle(BleCmdSetS1S.getCmdOfSetNoDisturbing(disturb, remind, light, volume));
             }
         }
-
-
     }
 
     /**

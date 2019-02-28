@@ -102,10 +102,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void answerGetLatestDrinkRecord(BleUtil.DrinkRecord record) {
             super.answerGetLatestDrinkRecord(record);
-            Log.i(TAG, "饮水记录时间------->" + record.recordTime);
-            Log.i(TAG, "饮水记录饮水量------->" + record.waterDrink);
-            Log.i(TAG, "饮水记录PPM------->" + record.ppm);
-            Log.i(TAG, "饮水记录温度------->" + record.temperature);
+            Log.i(TAG, "最近饮水记录索引------->" + record.recordNum);
+            Log.i(TAG, "最近饮水记录时间------->" + record.recordTime);
+            Log.i(TAG, "最近饮水记录饮水量------->" + record.waterDrink);
+            Log.i(TAG, "最近饮水记录PPM------->" + record.ppm);
+            Log.i(TAG, "最近饮水记录温度------->" + record.temperature);
         }
 
         @Override
@@ -248,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
         unbindBleService();
         blueBind.setNeedConnect(true);
         /**第三个蓝牙地址参数请修改为自己的，这里我用的测试蓝牙地址*/
-        blueBind.connectBluetooth(this, handler, "ED:6D:50:CA:05:CD");
+            blueBind.connectBluetooth(this, handler, "18:93:D7:51:B2:63");
     }
 
     /**
