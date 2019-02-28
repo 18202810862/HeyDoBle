@@ -16,7 +16,7 @@ HeyDo蓝牙模块
   
   
   	dependencies {
-	        compile 'com.github.18202810862:HeyDoBle:1.5'
+	        compile 'com.github.18202810862:HeyDoBle:1.6'
 	}
   
 2.在androidManifest中添加:
