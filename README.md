@@ -37,6 +37,8 @@ BleManager.getInstance().init(getApplication());
  
  2018/12/5:
  增加对添加饮水记录命令的支持
+ 2019/02/28:
+ 去掉搜索蓝牙时对蓝牙名字为空的判断
   
   
   
