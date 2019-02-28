@@ -16,7 +16,7 @@ HeyDo蓝牙模块
   
   
   	dependencies {
-	        compile 'com.github.18202810862:HeyDoBle:1.4'
+	        compile 'com.github.18202810862:HeyDoBle:1.5'
 	}
   
 2.在androidManifest中添加:
@@ -28,7 +28,15 @@ HeyDo蓝牙模块
 
 BleManager.getInstance().init(getApplication());
 
-  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 2018/12/5:
+ 增加对添加饮水记录命令的支持
   
   
   
