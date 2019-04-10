@@ -1,9 +1,6 @@
 # HeyDoBle
 HeyDo蓝牙模块
 
-项目中使用了FastBle
-支持版本为2.3.2
-
 1.在你的gradle中添加以下:
 
 	allprojects {
